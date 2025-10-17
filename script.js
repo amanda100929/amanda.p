@@ -30,6 +30,38 @@ const optionsContainer = document.getElementById('options-container');
 const feedbackElement = document.getElementById('feedback');
 const feedbackMessage = document.getElementById('feedback-message');
 const nextButton = document.getElementById('next-button');
+const usernameInput = document.createElement('input'); // Campo para inserir nome de usuário
+
+// Adicionando campo de nome de usuário
+if (!localStorage.getItem("username")) {
+  const usernameLabel = document.createElement('label');
+  usernameLabel.textContent = "Digite seu nome para começar:";
+  document.querySelector('.quiz-container').prepend(usernameLabel);
+  
+  usernameInput.type = "text";
+  usernameInput.placeholder = "Nome de usuário";
+  document.querySelector('.quiz-container').prepend(usernameInput);
+  
+  const startButton = document.createElement('button');
+  startButton.textContent = "Começar";
+  startButton.addEventListener('click', startQuiz);
+  document.querySelector('.quiz-container').prepend(startButton);
+  
+  function startQuiz() {
+    const username = usernameInput.value.trim();
+    if (username === "") {
+      alert("Por favor, digite um nome!");
+      return;
+    }
+    localStorage.setItem('username', username);
+    loadQuestion();
+    startButton.style.display = "none";
+    usernameInput.style.display = "none";
+    usernameLabel.style.display = "none";
+  }
+} else {
+  loadQuestion();
+}
 
 function loadQuestion() {
   const currentQuestion = questions[currentQuestionIndex];
@@ -70,15 +102,37 @@ nextButton.addEventListener('click', () => {
   if (currentQuestionIndex < questions.length) {
     loadQuestion();
   } else {
-    alert(`Fim do quiz! Você acertou ${score} de ${questions.length} perguntas.`);
-    resetQuiz();
+    showResult();
   }
 });
+
+function showResult() {
+  const username = localStorage.getItem('username');
+  
+  // Armazenando o resultado no localStorage
+  const ranking = JSON.parse(localStorage.getItem('ranking')) || [];
+  ranking.push({ username, score });
+  ranking.sort((a, b) => b.score - a.score); // Ordenando pela pontuação
+  localStorage.setItem('ranking', JSON.stringify(ranking));
+
+  alert(`Fim do quiz, ${username}! Você acertou ${score} de ${questions.length} perguntas.`);
+  
+  // Exibindo o ranking
+  showRanking(ranking);
+  resetQuiz();
+}
+
+function showRanking(ranking) {
+  let rankingList = "<h3>Ranking:</h3><ol>";
+  ranking.forEach((entry, index) => {
+    rankingList += `<li>${index + 1}. ${entry.username} - ${entry.score} pontos</li>`;
+  });
+  rankingList += "</ol>";
+  document.querySelector('.quiz-container').innerHTML += rankingList;
+}
 
 function resetQuiz() {
   currentQuestionIndex = 0;
   score = 0;
   loadQuestion();
 }
-
-loadQuestion();
