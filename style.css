@@ -21,6 +21,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   width: 300px;
   text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 h1 {
@@ -47,18 +48,22 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  transform: scale(1);
+  transition: transform 0.2s ease-in-out;
 }
 
 .option:hover {
   background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 #feedback {
   margin-top: 20px;
-}
-
-.hidden {
-  display: none;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  color: white;
+  animation: fadeIn 1s ease-in-out;
 }
 
 .correct {
@@ -77,8 +82,22 @@ h1 {
   border-radius: 5px;
   cursor: pointer;
   display: inline-block;
+  animation: fadeIn 1s ease-in-out;
 }
 
 #next-button:hover {
   background-color: #218838;
+}
+
+.hidden {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
